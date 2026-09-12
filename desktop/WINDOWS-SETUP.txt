@@ -1,0 +1,16 @@
+FATU University Portal — Windows o'rnatish
+
+1. FATU-University-Portal-Setup.exe faylini ishga tushiring.
+2. Installer ko'rsatmalariga amal qiling.
+3. PostgreSQL server ishlab turganini tekshiring.
+4. Ilovani birinchi marta oching.
+5. Ochilgan config.env fayliga DATABASE_URL va JWT_SECRET qiymatlarini yozing.
+6. Ilovani qayta ishga tushiring.
+
+Bazani birinchi marta tayyorlash uchun loyiha papkasidagi server muhitida:
+
+  npm install
+  npm run db:push
+  npm run db:seed
+
+Installer ilovaning o'z serverini ishga tushiradi, PostgreSQL serverini o'rnatmaydi.
