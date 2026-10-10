@@ -1,9 +1,13 @@
 {
-  "name": "nextjs-postgresql-template",
+  "name": "fatu-university-portal",
+  "version": "1.0.0",
+  "description": "FATU - Faxriddin Axborot Texnologiyalari Universiteti boshqaruv portali",
+  "author": "FATU <info@fatu.uz>",
   "private": true,
   "main": "desktop/main.cjs",
   "scripts": {
     "dev": "next dev",
+    "dev:db": "node scripts/dev-db.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
@@ -30,20 +34,22 @@
     "recharts": "^3.10.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "4.1.17",
     "@types/node": "22.19.15",
     "@types/pg": "8.18.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "drizzle-kit": "0.31.10",
+    "electron": "28.3.3",
+    "electron-builder": "24.13.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.4",
+    "pglite-server": "^0.1.5",
     "postcss": "8.5.8",
     "tailwindcss": "4.1.17",
     "tsx": "4.23.13",
-    "typescript": "5.9.3",
-    "electron": "28.3.3",
-    "electron-builder": "24.13.3"
+    "typescript": "5.9.3"
   },
   "build": {
     "appId": "uz.fatu.university.portal",

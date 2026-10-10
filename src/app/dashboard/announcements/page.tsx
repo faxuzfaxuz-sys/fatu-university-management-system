@@ -15,6 +15,7 @@ interface Announcement {
 interface User {
   role: string;
   fullName: string;
+  department?: string | null;
 }
 
 const deptLabels: Record<string, string> = {
@@ -31,6 +32,17 @@ const roleLabels: Record<string, string> = {
   teacher: "👨‍🏫 O'qituvchi",
   student: "👨‍💻 Talaba",
 };
+
+// Rektor bo'lmagan foydalanuvchilar faqat o'z yo'nalishi uchun e'lon joylashi mumkin
+function defaultForm(user: User | null) {
+  const ownDeptOnly = !!user && user.role !== "rector";
+  return {
+    title: "",
+    content: "",
+    department: ownDeptOnly ? user.department || "" : "",
+    isPublic: true,
+  };
+}
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -58,15 +70,20 @@ export default function AnnouncementsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    await fetch("/api/announcements", {
+    const res = await fetch("/api/announcements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
+    const data = await res.json().catch(() => null);
     setSubmitting(false);
-    setShowForm(false);
-    setForm({ title: "", content: "", department: "", isPublic: true });
-    fetchAll();
+    if (res.ok) {
+      setShowForm(false);
+      setForm(defaultForm(user));
+      fetchAll();
+    } else {
+      alert(data?.error || "E'lonni joylashtirishda xato yuz berdi");
+    }
   };
 
   const canPost = user?.role === "rector" || user?.role === "dean" || user?.role === "teacher";
@@ -88,7 +105,10 @@ export default function AnnouncementsPage() {
         </div>
         {canPost && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setForm(defaultForm(user));
+              setShowForm(true);
+            }}
             className="gradient-bg text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90"
           >
             + Yangi E'lon
@@ -170,16 +190,28 @@ export default function AnnouncementsPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1">Yo'nalish (ixtiyoriy)</label>
-                <select
-                  value={form.department}
-                  onChange={e => setForm({ ...form, department: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Barcha yo'nalishlar</option>
-                  {Object.entries(deptLabels).map(([val, label]) => (
-                    <option key={val} value={val}>{label}</option>
-                  ))}
-                </select>
+                {user && user.role !== "rector" ? (
+                  <select
+                    value={user.department || ""}
+                    disabled
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600"
+                  >
+                    <option value={user.department || ""}>
+                      {deptLabels[user.department || ""] || user.department || "Yo'nalish belgilanmagan"}
+                    </option>
+                  </select>
+                ) : (
+                  <select
+                    value={form.department}
+                    onChange={e => setForm({ ...form, department: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Barcha yo'nalishlar</option>
+                    {Object.entries(deptLabels).map(([val, label]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
+                  </select>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <input
