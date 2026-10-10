@@ -251,7 +251,7 @@ export async function seedDatabase() {
     },
     {
       title: "Moliya yo'nalishi bo'yicha seminar",
-      content: "Xalqaro moliya mutaxassislari bilan uchrashuw 20-noyabr kuni soat 14:00 da bo'lib o'tadi. Barcha talabalar taklif etiladi.",
+      content: "Xalqaro moliya mutaxassislari bilan uchrashuv 20-noyabr kuni soat 14:00 da bo'lib o'tadi. Barcha talabalar taklif etiladi.",
       authorId: dean3.id,
       isPublic: true,
     },

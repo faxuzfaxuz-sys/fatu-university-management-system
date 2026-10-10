@@ -13,7 +13,11 @@ export async function GET() {
   if (currentUser.role === "student") {
     // Get student's enrolled courses schedules
     const [userRecord] = await db.select().from(users).where(eq(users.id, currentUser.userId));
-    
+
+    if (!userRecord || !userRecord.department) {
+      return NextResponse.json([]);
+    }
+
     const mySchedules = await db
       .select({
         id: schedules.id,
@@ -29,7 +33,7 @@ export async function GET() {
       .from(schedules)
       .leftJoin(courses, eq(schedules.courseId, courses.id))
       .leftJoin(users, eq(schedules.teacherId, users.id))
-      .where(eq(schedules.department, userRecord.department!));
+      .where(eq(schedules.department, userRecord.department));
 
     return NextResponse.json(mySchedules);
   }

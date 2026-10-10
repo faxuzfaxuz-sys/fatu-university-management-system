@@ -12,6 +12,7 @@ export default function HomePage() {
     message: "",
   });
   const [applySuccess, setApplySuccess] = useState(false);
+  const [applyError, setApplyError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const departments = [
@@ -25,6 +26,7 @@ export default function HomePage() {
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setApplyError("");
     try {
       const res = await fetch("/api/applications", {
         method: "POST",
@@ -34,7 +36,13 @@ export default function HomePage() {
       if (res.ok) {
         setApplySuccess(true);
         setShowApplyForm(false);
+        setApplyData({ applicantName: "", email: "", phone: "", department: "", message: "" });
+      } else {
+        const data = await res.json().catch(() => null);
+        setApplyError(data?.error || "Arizani yuborishda xato yuz berdi");
       }
+    } catch {
+      setApplyError("Server bilan ulanishda xato");
     } finally {
       setLoading(false);
     }
@@ -357,6 +365,11 @@ export default function HomePage() {
                   placeholder="O'zingiz haqingizda qisqacha ma'lumot..."
                 />
               </div>
+              {applyError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-3 text-sm flex items-center gap-2">
+                  <span>⚠️</span> {applyError}
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={loading}
